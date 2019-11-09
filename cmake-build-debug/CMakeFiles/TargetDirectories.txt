@@ -1,3 +1,0 @@
-C:/Users/Nikita/CLionProjects/rubezh/cmake-build-debug/CMakeFiles/Rubezh.dir
-C:/Users/Nikita/CLionProjects/rubezh/cmake-build-debug/CMakeFiles/edit_cache.dir
-C:/Users/Nikita/CLionProjects/rubezh/cmake-build-debug/CMakeFiles/rebuild_cache.dir
