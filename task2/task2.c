@@ -52,7 +52,7 @@ char insert(ThinList *list, int key, int value) {
 
 //char remove(ThinList *list, int key);
 
-int task2() {
+int main() {
     ThinList thinList;
     ThinNode thinNode;
     thinNode.key = 0;

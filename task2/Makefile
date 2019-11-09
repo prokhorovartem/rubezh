@@ -1,2 +1,2 @@
 all:
-	g++ -std=c++11 -Wall -Werrr -pedantic main.c task2.c -o rubezh
+	g++ -std=c++11 -Wall -Werrr -pedantic task2.c -o task2
