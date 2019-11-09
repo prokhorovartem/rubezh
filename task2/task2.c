@@ -54,7 +54,7 @@ char remove(ThinList *list, int key) {
         } else{
             pthread_mutex_unlock(prev->mutex);
             pthread_mutex_unlock(curr->mutex);
-            ret = -1;
+            ret = 0;
         }
     }
 
