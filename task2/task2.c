@@ -51,17 +51,3 @@ char insert(ThinList *list, int key, int value) {
 }
 
 //char remove(ThinList *list, int key);
-
-int main() {
-    ThinList thinList;
-    ThinNode thinNode;
-    thinNode.key = 0;
-    thinNode.value = 1;
-
-    thinList.root = &thinNode;
-
-    insert(&thinList, 1, 2);
-
-    printf("123");
-}
-

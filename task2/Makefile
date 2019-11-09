@@ -1,2 +1,2 @@
 all:
-	g++ -std=c++11 -Wall -Werrr -pedantic task2.c -o task2
+	g++ -std=c++11 -Wall -Werrr -pedantic task2.c main.c -o task2
