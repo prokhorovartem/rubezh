@@ -1,4 +1,6 @@
 #include <pthread.h>
+#include <stdio.h>
+#include <stdlib.h>
 
 typedef struct ThinNode {
     int key;
@@ -16,9 +18,50 @@ typedef struct {
     int value;
 } FindResult;
 
-FindResult find(ThinList *list, int key);
+//FindResult find(ThinList *list, int key);
 
-char insert(ThinList *list, int key, int value);
+char insert(ThinList *list, int key, int value) {
+    if (pthread_mutex_lock(&list->root[key].mutex) != 0) {
+        perror("pthread_mutex_lock() error");
+        exit(1);
+    }
+    if (pthread_mutex_lock(&list->root[key].next->mutex) != 0) {
+        perror("pthread_mutex_lock() error");
+        exit(1);
+    }
 
-char remove(ThinList *list, int key);
+    ThinNode savedThinNode = list->root[key];
+    struct ThinNode thinNode;
+    thinNode.key = key;
+    thinNode.value = value;
+    thinNode.next = &savedThinNode;
+
+    list->root[key] = thinNode;
+
+    if (pthread_mutex_unlock(&list->root[key].mutex) != 0) {
+        perror("pthread_mutex_unlock() error");
+        exit(1);
+    }
+    if (pthread_mutex_unlock(&list->root[key].next->mutex) != 0) {
+        perror("pthread_mutex_unlock() error");
+        exit(1);
+    }
+
+    printf("Element inserted");
+}
+
+//char remove(ThinList *list, int key);
+
+int task2() {
+    ThinList thinList;
+    ThinNode thinNode;
+    thinNode.key = 0;
+    thinNode.value = 1;
+
+    thinList.root = &thinNode;
+
+    insert(&thinList, 1, 2);
+
+    printf("123");
+}
 
