@@ -1,3 +1,0 @@
-/Users/daniilkuzcutkomov/Documents/GIT/rubezh/cmake-build-debug/CMakeFiles/rebuild_cache.dir
-/Users/daniilkuzcutkomov/Documents/GIT/rubezh/cmake-build-debug/CMakeFiles/edit_cache.dir
-/Users/daniilkuzcutkomov/Documents/GIT/rubezh/cmake-build-debug/CMakeFiles/Rubezh.dir
