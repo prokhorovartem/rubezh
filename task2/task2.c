@@ -1,24 +1,42 @@
-#include <pthread.h>
+#include "task2.h"
 
-typedef struct ThinNode {
-    int key;
-    int value;
-    pthread_mutex_t mutex;
-    struct ThinNode *next;
-} ThinNode;
+#define lock(_mtx_) pthread_mutex_lock(&(_mtx_))
+#define unlock(_mtx_) pthread_mutex_unlock(&(_mtx_))
 
-typedef struct {
-    ThinNode *root;
-} ThinList;
+FindResult find(ThinList *list, int key) {
+    ThinNode *pred, *curr;
+    FindResult result = {'0'};
+    lock(list->root->mutex);
 
-typedef struct {
-    char exists;
-    int value;
-} FindResult;
+    pred = list->root;
+    curr = pred->next;
 
-FindResult find(ThinList *list, int key);
+    lock(curr->mutex);
 
-char insert(ThinList *list, int key, int value);
+    if (curr->next == NULL) {
+        //if there is no nodes in list
+        unlock(list->root->mutex);
+        unlock(curr->mutex);
+    } else {
+        if (pred->key == key) {
+            result.exists = '1';
+            result.value = pred->value;
+        }
+        while (curr->next != NULL && curr->key < key) {
+            unlock(pred->mutex);
+            pred = curr;
+            curr = curr->next;
+            lock(curr->mutex);
+        }
+        if (curr->next != NULL && curr->key == key) {
+            result.exists = '1';
+            result.value = curr->value;
+        }
 
-char remove(ThinList *list, int key);
+        unlock(pred->mutex);
+        unlock(curr->mutex);
+    }
+
+    return result;
+}
 
