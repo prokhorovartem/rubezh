@@ -1,22 +1,6 @@
-#include <pthread.h>
 #include <stdio.h>
 #include <stdlib.h>
-
-typedef struct ThinNode {
-    int key;
-    int value;
-    pthread_mutex_t mutex;
-    struct ThinNode *next;
-} ThinNode;
-
-typedef struct {
-    ThinNode *root;
-} ThinList;
-
-typedef struct {
-    char exists;
-    int value;
-} FindResult;
+#include "thinList.h"
 
 //FindResult find(ThinList *list, int key);
 
