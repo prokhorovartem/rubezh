@@ -1,7 +1,7 @@
-cmake_minimum_required(VERSION 3.15)
-project(untitled)
+cmake_minimum_required(VERSION 3.14)
+project(Rubezh C)
 
-set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_FLAGS "clang++ -std=c++11 -Wall -Werrr -pedantic")
 
-add_executable(task task1.cpp main.cpp task1.h)
+include_directories(${PROJECT_SOURCE_DIR})
+add_executable(task1Main main.c task1.c)

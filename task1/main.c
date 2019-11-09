@@ -1,10 +1,9 @@
 #include <cassert>
 #include "task1.h"
 
-void simple_test() {
+void main() {
     RoughList *list;
     list = init();
-
     insert(list, 1, 2);
 
     {
