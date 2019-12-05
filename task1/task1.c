@@ -2,6 +2,7 @@
 
 #define lock(_mtx_) pthread_mutex_lock(&(_mtx_))
 #define unlock(_mtx_) pthread_mutex_unlock(&(_mtx_))
+#define free_node(_node_) free(_node_)
 
 FindResult find(RoughList *list, int key) {
     RoughNode *pred, *curr;
@@ -49,7 +50,8 @@ char insert(RoughList *list, int key, int value) {
             curr = curr->next;
         }
 
-        if (curr != list->tail && key == curr->key) { free_node(newNode);
+        if (curr != list->tail && key == curr->key) {
+            free_node(newNode);
             res = '0';
         } else {
             newNode->next = curr;
@@ -80,7 +82,8 @@ char remove(RoughList *list, int key) {
         }
 
         if (key == curr->key) {
-            pred->next = curr->next;free_node(curr);
+            pred->next = curr->next;
+            free_node(curr);
         } else
             res = '0';
     }
