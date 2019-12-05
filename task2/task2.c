@@ -1,16 +1,10 @@
-#include "task2.h"
+#include <task2.h>
 #include <pthread.h>
 #include <stdlib.h>
 
 #define lock(_mutex_) pthread_mutex_lock(&(_mutex_))
 #define unlock(_mutex_) pthread_mutex_unlock(&(_mutex_))
-
-#ifdef _FREE_
-#define free_node(node) do {pthread_mutex_destroy(&node->mutex);\
-    free(node);  }while(0);
-#else
-#define free_node(node) ;
-#endif
+#define free_node(node);
 
 static ThinNode *create_node(int, int);
 
@@ -26,6 +20,48 @@ static ThinNode *create_node(const int key, const int val) {
     node->val = val;
 
     return node;
+}
+
+char insert(ThinList *list, int key, int val) {
+    ThinNode *pred, *curr;
+    ThinNode *newNode;
+    char ret = 1;
+
+    if ((newNode = create_node(key, val)) == NULL)
+        return 0;
+
+    lock(list->head->mutex);
+
+    pred = list->head;
+    curr = pred->next;
+
+    lock(curr->mutex);
+
+    if (curr == list->tail) {
+        list->head->next = newNode;
+        newNode->next = list->tail;
+
+        unlock(list->head->mutex);
+        unlock(curr->mutex);
+    } else {
+        while (curr != list->tail && curr->key < key) {
+            unlock(pred->mutex);
+            pred = curr;
+            curr = curr->next;
+            lock(curr->mutex);
+        }
+
+        if (curr != list->tail && key == curr->key) { free_node(newNode);
+            ret = 0;
+        } else {
+            newNode->next = curr;
+            pred->next = newNode;
+        }
+        unlock(pred->mutex);
+        unlock(curr->mutex);
+    }
+
+    return ret;
 }
 
 FindResult find(ThinList *list, int key) {
@@ -111,61 +147,7 @@ char myRemove(ThinList *list, int key) {
     return ret;
 }
 
-char insert(ThinList *list, int key, int val) {
-    ThinNode *pred, *curr;
-    ThinNode *newNode;
-    char ret = 1;
-
-    if ((newNode = create_node(key, val)) == NULL)
-        return 0;
-
-    lock(list->head->mutex);  /* get lock of list->head. */
-
-    pred = list->head;
-    curr = pred->next;      /* curr is next node of list->head */
-
-    lock(curr->mutex);        /* get lock of curr */
-
-    if (curr == list->tail) {
-        /* there is no node in the list */
-        list->head->next = newNode;
-        newNode->next = list->tail;
-
-        unlock(list->head->mutex);
-        unlock(curr->mutex);
-    } else {
-        while (curr != list->tail && curr->key < key) {
-            /* getting locks of pred and curr */
-            unlock(pred->mutex);
-            /* rename curr to pred. */
-            pred = curr;
-            curr = curr->next;
-            lock(curr->mutex);
-            /* getting locks of pred and curr. */
-        }
-
-        /*
-         *  assert((pred->key) < (newNode->key) <= (curr->key))
-         */
-
-        if (curr != list->tail && key == curr->key) {
-            /* already there is a node has same key. */
-            free_node(newNode);
-            ret = 0;
-        } else {
-            /* add node */
-            newNode->next = curr;
-            pred->next = newNode;
-        }
-        unlock(pred->mutex);
-        unlock(curr->mutex);
-    }
-
-    return ret;
-}
-
-ThinList *init_list(void)
-{
+ThinList *init_list(void) {
     ThinList *list;
 
     if ((list = (ThinList *) calloc(1, sizeof(ThinList))) == NULL) {
@@ -173,7 +155,7 @@ ThinList *init_list(void)
     }
 
     if ((list->head = (ThinNode *) calloc(1, sizeof(ThinNode))) == NULL) {
-        free (list);
+        free(list);
         goto end;
     }
     list->head->mutex = (pthread_mutex_t) PTHREAD_MUTEX_INITIALIZER;
@@ -188,8 +170,52 @@ ThinList *init_list(void)
 
     return list;
 
-    end :
-    free (list->head);
-    free (list);
+    end:
+    free(list->head);
+    free(list);
     return NULL;
+}
+
+void *addNode(ThinNode *pred, ThinList *list_copy) {
+    ThinNode *pred_temp = list_copy->head,
+            *curr_temp = pred_temp->next,
+            *newNode = create_node(pred->key, pred->val);
+
+    while (curr_temp != list_copy->tail && curr_temp->key < pred->key) {
+        pred_temp = curr_temp;
+        curr_temp = curr_temp->next;
+    }
+
+    newNode->next = curr_temp;
+    pred_temp->next = newNode;
+}
+
+ThinList *get_snapshot(ThinList *list) {
+    ThinList *list_copy = init_list();
+    ThinNode *pred, *curr;
+
+    lock(list->head->mutex);
+    pred = list->head;
+    curr = pred->next;
+    lock(curr->mutex);
+
+    if (curr == list->tail) {
+        unlock(list->head->mutex);
+        unlock(curr->mutex);
+
+        return list_copy;
+    }
+
+    while (curr != list->tail) {
+        unlock(pred->mutex);
+        pred = curr;
+        curr = curr->next;
+        lock(curr->mutex);
+
+        addNode(pred, list_copy);
+    }
+
+    unlock(curr->mutex);
+
+    return list_copy;
 }

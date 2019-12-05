@@ -44,4 +44,12 @@ int main() {
         FindResult result = find(list, 2);
         assert(result.exists == '0');
     }
+
+    insert(list, 1, 2);
+    insert(list, 3, 3);
+    insert(list, 2, 4);
+
+    RoughList roughList = get_snapshot(list);
+
+    assert(roughList.head != NULL);
 }

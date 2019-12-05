@@ -3,7 +3,7 @@
 typedef struct ThinNode {
     int key;
     int val;
-    struct _node_t *next;
+    struct ThinNode *next;
     pthread_mutex_t mutex;
 } ThinNode;
 
@@ -17,10 +17,12 @@ typedef struct {
     int value;
 } FindResult;
 
-FindResult find(ThinList *list, int key);
-
 char insert(ThinList *list, int key, int value);
+
+FindResult find(ThinList *list, int key);
 
 char myRemove(ThinList *list, int key);
 
 ThinList *init_list(void);
+
+ThinList *get_snapshot(ThinList *list);

@@ -17,12 +17,12 @@ typedef struct {
     int value;
 } FindResult;
 
-char myRemove(RoughList *list, int key);
-
 char insert(RoughList *list, int key, int value);
 
 FindResult find(RoughList *list, int key);
 
+char myRemove(RoughList *list, int key);
+
 RoughList *init_list(void);
 
-void free_list (RoughList *);
+RoughList get_snapshot(RoughList *list);

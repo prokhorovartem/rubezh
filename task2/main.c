@@ -1,6 +1,5 @@
 #include <assert.h>
 #include <task2.h>
-#include <stdio.h>
 
 int main() {
     ThinList *list = init_list();
@@ -45,4 +44,12 @@ int main() {
         FindResult result = find(list, 2);
         assert(result.exists == '0');
     }
+
+    insert(list, 0, 1);
+    insert(list, 1, 2);
+    insert(list, 2, 3);
+    insert(list, 3, 4);
+
+    ThinList *copyThinList = get_snapshot(list);
+    assert(copyThinList->head != NULL);
 }

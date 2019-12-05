@@ -4,9 +4,45 @@
 
 #define lock(_mtx_) pthread_mutex_lock(&(_mtx_))
 #define unlock(_mtx_) pthread_mutex_unlock(&(_mtx_))
-#define free_node(_node_) ;
+#define free_node(_node_) free(_node_);
 
 static RoughNode *create_node(int, int);
+
+char insert(RoughList *list, int key, int value) {
+    RoughNode *pred, *curr;
+    RoughNode *newNode;
+    char result = '1';
+
+    if ((newNode = create_node(key, value)) == NULL)
+        return '0';
+
+    lock(list->mtx);
+
+    pred = list->head;
+    curr = pred->next;
+
+    if (curr == list->tail) {
+        list->head->next = newNode;
+        newNode->next = list->tail;
+    } else {
+        while (curr != list->tail && curr->key < key) {
+            pred = curr;
+            curr = curr->next;
+        }
+
+        if (curr != list->tail && key == curr->key) {
+            free_node(newNode)
+            result = '0';
+        } else {
+            newNode->next = curr;
+            pred->next = newNode;
+        }
+    }
+
+    unlock(list->mtx);
+
+    return result;
+}
 
 FindResult find(RoughList *list, int key) {
     RoughNode *pred, *curr;
@@ -32,41 +68,6 @@ FindResult find(RoughList *list, int key) {
     }
 
     unlock(list->mtx);
-    return res;
-}
-
-char insert(RoughList *list, int key, int value) {
-    RoughNode *pred, *curr;
-    RoughNode *newNode;
-    char res = '1';
-
-    if ((newNode = create_node(key, value)) == NULL)
-        return '0';
-
-    lock(list->mtx);
-
-    pred = list->head;
-    curr = pred->next;
-
-    if (curr == list->tail) {
-        list->head->next = newNode;
-        newNode->next = list->tail;
-    } else {
-        while (curr != list->tail && curr->key < key) {
-            pred = curr;
-            curr = curr->next;
-        }
-
-        if (curr != list->tail && key == curr->key) { free_node(newNode);
-            res = '0';
-        } else {
-            newNode->next = curr;
-            pred->next = newNode;
-        }
-    }
-
-    unlock(list->mtx);
-
     return res;
 }
 
@@ -136,17 +137,13 @@ RoughList *init_list(void) {
     return NULL;
 }
 
-void free_list(RoughList *list) {
-    RoughNode *curr, *next;
+RoughList get_snapshot(RoughList *list) {
+    lock(list->mtx);
 
-    curr = list->head->next;
+    RoughList roughList = {.head = list->head,
+            .tail = list->tail};
 
-    while (curr != list->tail) {
-        next = curr->next;free_node (curr);
-        curr = next;
-    }
+    unlock(list->mtx);
 
-    free_node(list->head);free_node(list->tail);
-    pthread_mutex_destroy(&list->mtx);
-    free(list);
+    return roughList;
 }
