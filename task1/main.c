@@ -1,17 +1,47 @@
+#include <assert.h>
 #include "task1.h"
 
 int main() {
-    pthread_mutex_t mutex;
-    pthread_mutex_init(&mutex, NULL);
-    RoughNode node1, node2;
-    node1.key = 1;
-    node1.value = 1;
-    node2.key = 0;
-    node2.value = 2;
-    node2.next = &node1;
-    RoughList list;
-    list.head = &node2;
-    list.tail = &node1;
-    list.mtx = mutex;
-    FindResult find1 = find(&list, 1);
+    RoughList *list = init_list();
+    insert(list, 1, 2);
+    {
+        FindResult result = find(list, 1);
+        assert(result.exists == '1');
+        assert(result.value == 2);
+    }
+
+    FindResult result = find(list, 0);
+    assert(result.exists == '0');
+
+    insert(list, 0, 1);
+    {
+        FindResult result = find(list, 0);
+        assert(result.exists == '1');
+        assert(result.value == 1);
+        insert(list, 2, 3);
+        {
+            FindResult result = find(list, 2);
+            assert(result.exists == '1');
+            assert(result.value == 3);
+        }
+        assert(myRemove(list, 1));
+    }
+    {
+        FindResult result = find(list, 1);
+        assert(result.exists == '0');
+    }
+    assert(myRemove(list, 0));
+    assert(myRemove(list, 2));
+    {
+        FindResult result = find(list, 0);
+        assert(result.exists == '0');
+    }
+    {
+        FindResult result = find(list, 1);
+        assert(result.exists == '0');
+    }
+    {
+        FindResult result = find(list, 2);
+        assert(result.exists == '0');
+    }
 }

@@ -1,17 +1,48 @@
-#include "task2.h"
+#include <assert.h>
+#include <task2.h>
+#include <stdio.h>
 
 int main() {
-    pthread_mutex_t mutex;
-    pthread_mutex_init(&mutex, NULL);
-    ThinNode node1, node2;
-    node1.key = 1;
-    node1.value = 1;
-    node1.mutex = mutex;
-    node2.key = 0;
-    node2.value = 2;
-    node2.mutex = mutex;
-    node2.next = &node1;
-    ThinList list;
-    list.root = &node2;
-    FindResult find1 = find(&list, 1);
+    ThinList *list = init_list();
+    insert(list, 1, 2);
+    {
+        FindResult result = find(list, 1);
+        assert(result.exists == '1');
+        assert(result.value == 2);
+    }
+
+    FindResult result = find(list, 0);
+    assert(result.exists == '0');
+
+    insert(list, 0, 1);
+    {
+        FindResult result = find(list, 0);
+        assert(result.exists == '1');
+        assert(result.value == 1);
+        insert(list, 2, 3);
+        {
+            FindResult result = find(list, 2);
+            assert(result.exists == '1');
+            assert(result.value == 3);
+        }
+        assert(myRemove(list, 1));
+    }
+    {
+        FindResult result = find(list, 1);
+        assert(result.exists == '0');
+    }
+    assert(myRemove(list, 0));
+    assert(myRemove(list, 2));
+    {
+        FindResult result = find(list, 0);
+        assert(result.exists == '0');
+    }
+    {
+        FindResult result = find(list, 1);
+        assert(result.exists == '0');
+    }
+    {
+        FindResult result = find(list, 2);
+        assert(result.exists == '0');
+    }
 }
