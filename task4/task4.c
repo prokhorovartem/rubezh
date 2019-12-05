@@ -3,13 +3,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-static node_t *create_node(val_t);
+static node_t *create_node(int);
 
-static void free_node(node_t *);
-
-
-static inline bool
-cas(volatile pointer_t *addr, pointer_t oldp, const pointer_t newp) {
+cas(volatile pointer_t *addr, pointer_t oldp, const pointer_t newp) { // Здесь признаемся, что взяли с инета, иначе хз
+    // как это понимать
     char result;
     __asm__ __volatile__("lock; cmpxchg16b %0; setz %1":"=m"(*addr),
     "=q"(result)
@@ -20,11 +17,10 @@ cas(volatile pointer_t *addr, pointer_t oldp, const pointer_t newp) {
 }
 
 
-static node_t *create_node(const val_t val) {
+static node_t *create_node(const int val) {
     node_t *node;
 
     if ((node = (node_t *) calloc(1, sizeof(node_t))) == NULL) {
-        elog("calloc error");
         return NULL;
     }
 
@@ -35,24 +31,15 @@ static node_t *create_node(const val_t val) {
     return node;
 }
 
-static void free_node(node_t *node) {
-#ifdef _FREE_
-    free(node);
-#endif
-}
-
-
 ConcurrentQueue *init_queue(void) {
     ConcurrentQueue *q;
     node_t *node;
 
     if ((q = (ConcurrentQueue *) calloc(1, sizeof(ConcurrentQueue))) == NULL) {
-        elog("calloc error");
         return NULL;
     }
 
-    if ((node = create_node((val_t) NULL)) == NULL) {
-        elog("create_node() error");
+    if ((node = create_node((int) NULL)) == NULL) {
         abort();
     }
 
@@ -67,7 +54,7 @@ void free_queue(ConcurrentQueue *q) {
 }
 
 
-bool enqueue(ConcurrentQueue *q, const val_t val) {
+bool enqueue(ConcurrentQueue *q, const int val) {
     node_t *newNode;
     pointer_t tail, next, tmp;
 
@@ -100,7 +87,7 @@ bool enqueue(ConcurrentQueue *q, const val_t val) {
 }
 
 
-bool dequeue(ConcurrentQueue *q, val_t *val) {
+bool dequeue(ConcurrentQueue *q, int *val) {
     pointer_t head, tail, next, tmp;
 
     while (1) {
@@ -127,7 +114,7 @@ bool dequeue(ConcurrentQueue *q, val_t *val) {
         }
     }
 
-    free_node(head.ptr);
+    free(head.ptr);
     return true;
 }
 

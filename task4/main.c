@@ -1,10 +1,10 @@
-#include "task4.h"
+#include <task4.h>
 
 ConcurrentQueue *q;
 
 int main(int argc, char **argv) {
     int i;
-    val_t val;
+    int val;
 
     int max = 10;
 
