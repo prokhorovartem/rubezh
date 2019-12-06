@@ -1,12 +1,11 @@
 #include <task2.h>
 #include <pthread.h>
 #include <stdlib.h>
+#include <stdbool.h>
 
 #define lock(_mutex_) pthread_mutex_lock(&(_mutex_))
 #define unlock(_mutex_) pthread_mutex_unlock(&(_mutex_))
 #define free_node(node);
-
-static ThinNode *create_node(int, int);
 
 static ThinNode *create_node(const int key, const int val) {
     ThinNode *node;
@@ -130,7 +129,6 @@ char myRemove(ThinList *list, int key) {
             lock(curr->mutex);
         }
 
-        /* assert((pred->key) < (newNode->key) <= (curr->key)) */
         if (curr != list->tail && key == curr->key) {
 //            *val = curr->val;
             pred->next = curr->next;
@@ -190,32 +188,76 @@ void *addNode(ThinNode *pred, ThinList *list_copy) {
     pred_temp->next = newNode;
 }
 
+//ThinList *get_snapshot(ThinList *list) {
+//    ThinList *list_copy = init_list();
+//    ThinNode *pred, *curr;
+//
+//    lock(list->head->mutex);
+//    pred = list->head;
+//    curr = pred->next;
+//    lock(curr->mutex);
+//
+//    if (curr == list->tail) {
+//        unlock(list->head->mutex);
+//        unlock(curr->mutex);
+//
+//        return list_copy;
+//    }
+//
+//    while (curr != list->tail) {
+//        unlock(pred->mutex);
+//        pred = curr;
+//        curr = curr->next;
+//        lock(curr->mutex);
+//
+//        addNode(pred, list_copy);
+//    }
+//
+//    unlock(curr->mutex);
+//
+//    return list_copy;
+//}
+
+bool compareNodes(ThinNode *node1, ThinNode *node2) {
+    if (node1->key == node2->key && node1->val == node2->val)
+        return true;
+    else
+        return false;
+}
+
+ThinList *copyList(ThinList *list, ThinList *list_copy) {
+    ThinNode *curr = list->head;
+
+    list_copy = init_list();
+
+    while (curr->next != list->tail) {
+        addNode(curr->next, list_copy);
+        curr = curr->next;
+    }
+
+    return list_copy;
+}
+
 ThinList *get_snapshot(ThinList *list) {
     ThinList *list_copy = init_list();
-    ThinNode *pred, *curr;
+    ThinNode *curr, *curr_temp_copy;
 
-    lock(list->head->mutex);
-    pred = list->head;
-    curr = pred->next;
-    lock(curr->mutex);
+    list_copy = copyList(list, list_copy);
 
-    if (curr == list->tail) {
-        unlock(list->head->mutex);
-        unlock(curr->mutex);
+    curr = list->head;
+    curr_temp_copy = list_copy->head;
 
-        return list_copy;
+    while (curr->next != list->tail) {
+        if (!compareNodes(curr, curr_temp_copy)) {
+            list_copy = copyList(list, list_copy);
+
+            curr = list->head;
+            curr_temp_copy = list_copy->head;
+        } else {
+            curr = curr->next;
+            curr_temp_copy = curr_temp_copy->next;
+        }
     }
-
-    while (curr != list->tail) {
-        unlock(pred->mutex);
-        pred = curr;
-        curr = curr->next;
-        lock(curr->mutex);
-
-        addNode(pred, list_copy);
-    }
-
-    unlock(curr->mutex);
 
     return list_copy;
 }
