@@ -2,6 +2,7 @@
 
 #include <mutex>
 #include <queue>
+#include "SafeQueue.h"
 
 using namespace std;
 
@@ -25,9 +26,10 @@ public:
     return m_queue.size();
   }
 
-  void enqueue(T& t) {
+  bool enqueue(T& t) {
     unique_lock<mutex> lock(m_mutex);
     m_queue.push(t);
+      return true;
   }
   
   bool dequeue(T& t) {

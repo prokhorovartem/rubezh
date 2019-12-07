@@ -1,9 +1,7 @@
 cmake_minimum_required(VERSION 3.14.5)
 project(thread_pool_master)
 
-set(HEADERS SafeQueue.h ThreadPool.h)
-
-set(SOURCES main.cpp ../task1/main.c ../task1/task1.h ../task1/task1.c)
+set(SOURCES main.cpp SafeQueue.h ThreadPool.h)
 
 SET(CMAKE_CXX_FLAGS -pthread)
 
