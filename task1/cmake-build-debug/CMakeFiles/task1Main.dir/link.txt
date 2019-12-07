@@ -1,0 +1,1 @@
+/usr/bin/cc -g   CMakeFiles/task1Main.dir/main.c.o CMakeFiles/task1Main.dir/task1.c.o CMakeFiles/task1Main.dir/home/maximus/Desktop/bol/task2/task2.c.o CMakeFiles/task1Main.dir/home/maximus/Desktop/bol/task2/main.c.o  -o task1Main 

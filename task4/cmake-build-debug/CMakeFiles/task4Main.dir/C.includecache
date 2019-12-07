@@ -1,0 +1,32 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+../task4.h
+inttypes.h
+-
+stdbool.h
+-
+
+/home/maximus/Desktop/bol/task4/main.c
+task4.h
+-
+
+/home/maximus/Desktop/bol/task4/task4.c
+task4.h
+/home/maximus/Desktop/bol/task4/task4.h
+stdio.h
+-
+stdlib.h
+-
+
+/home/maximus/Desktop/bol/task4/task4.h
+inttypes.h
+-
+stdbool.h
+-
+

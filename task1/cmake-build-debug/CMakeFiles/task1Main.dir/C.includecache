@@ -1,0 +1,26 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/maximus/Desktop/bol/task1/main.c
+assert.h
+-
+task1.h
+/home/maximus/Desktop/bol/task1/task1.h
+
+/home/maximus/Desktop/bol/task1/task1.c
+task1.h
+/home/maximus/Desktop/bol/task1/task1.h
+stdlib.h
+-
+pthread.h
+-
+
+/home/maximus/Desktop/bol/task1/task1.h
+pthread.h
+-
+

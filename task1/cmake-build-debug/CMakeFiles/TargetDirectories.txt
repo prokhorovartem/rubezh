@@ -1,0 +1,3 @@
+/home/maximus/Desktop/bol/task1/cmake-build-debug/CMakeFiles/rebuild_cache.dir
+/home/maximus/Desktop/bol/task1/cmake-build-debug/CMakeFiles/task1Main.dir
+/home/maximus/Desktop/bol/task1/cmake-build-debug/CMakeFiles/edit_cache.dir
