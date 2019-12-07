@@ -3,7 +3,7 @@ project(thread_pool_master)
 
 set(HEADERS SafeQueue.h ThreadPool.h)
 
-set(SOURCES main.cpp)
+set(SOURCES main.cpp ../task1/main.c ../task1/task1.h ../task1/task1.c)
 
 SET(CMAKE_CXX_FLAGS -pthread)
 
