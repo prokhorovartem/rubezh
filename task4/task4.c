@@ -3,8 +3,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-static node_t *create_node(int);
-
 cas(volatile pointer_t *addr, pointer_t oldp, const pointer_t newp) { // Здесь признаемся, что взяли с инета, иначе хз
     // как это понимать
     char result;
@@ -15,7 +13,6 @@ cas(volatile pointer_t *addr, pointer_t oldp, const pointer_t newp) { // Зде�
     :"memory");
     return (((int) result == 0) ? false : true);
 }
-
 
 static node_t *create_node(const int val) {
     node_t *node;
@@ -53,8 +50,7 @@ void free_queue(ConcurrentQueue *q) {
     free(q);
 }
 
-
-bool enqueue(ConcurrentQueue *q, const int val) {
+bool enqueue(ConcurrentQueue *q, const int val){
     node_t *newNode;
     pointer_t tail, next, tmp;
 
@@ -86,7 +82,6 @@ bool enqueue(ConcurrentQueue *q, const int val) {
     return true;
 }
 
-
 bool dequeue(ConcurrentQueue *q, int *val) {
     pointer_t head, tail, next, tmp;
 
@@ -117,7 +112,6 @@ bool dequeue(ConcurrentQueue *q, int *val) {
     free(head.ptr);
     return true;
 }
-
 
 void show_queue(ConcurrentQueue *q) {
     node_t *curr;
