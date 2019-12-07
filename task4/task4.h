@@ -4,12 +4,12 @@
 typedef struct _pointer_t {
     intptr_t count;
     struct _node_t *ptr;
-}__attribute__((packed)) pointer_t;
+} pointer_t;
 
 typedef struct _node_t {
     pointer_t next;
     int val;
-}__attribute__((packed)) node_t;
+} node_t;
 
 typedef struct ConcurrentQueue {
     pointer_t head;
