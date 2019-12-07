@@ -1,11 +1,22 @@
 #include <assert.h>
-#include "task2.h"
-#include <pthread.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include "task2.h"
 
-void remove_test(ThinList *list, int low, int high){
-    for(int i = low; i < high; i++)
-        myRemove(list, i);
+typedef struct ThinTest {
+    ThinList *list;
+    int low;
+    int high;
+} ThinTest;
+
+void *remove_test(ThinTest test){
+    for(int i = test.low; i < test.high; i++)
+        myRemove(test.list, i);
+}
+
+void *create_arr(ThinList *list){
+    for(int i = 0; i < 100; i++)
+        insert(list, i * 3, i);
 }
 
 int main() {
@@ -62,16 +73,32 @@ int main() {
 
 
 
-    for(int i = 0; i < 100; i++)
-        insert(list, i * 3, i);
+    ///////////////////////////
+    pthread_t create_thread;
+    pthread_create(&create_thread, NULL, create_arr, list);
 
-    pthread_t my_thread;
 
-    int ret =  pthread_create(&my;_thread, NULL, &worker;_thread, NULL);
-    if(ret != 0) {
-        printf("Error: pthread_create() failed\n");
-        exit(EXIT_FAILURE);
-    }
+    pthread_t thread1, thread2, thread3;
 
-    pthread_exit(NULL);
+    ThinTest *thinTest1;
+    thinTest1 = (ThinTest *) calloc(1, sizeof(ThinTest));
+    thinTest1->list = list;
+    thinTest1->low = 0;
+    thinTest1->high = 33;
+    pthread_create(&thread1, NULL, remove_test, thinTest1);
+
+    ThinTest *thinTest2;
+    thinTest2 = (ThinTest *) calloc(1, sizeof(ThinTest));
+    thinTest2->list = list;
+    thinTest2->low = 34;
+    thinTest2->high = 66;
+    pthread_create(&thread1, NULL, remove_test, thinTest2);
+
+    ThinTest *thinTest3;
+    thinTest3 = (ThinTest *) calloc(1, sizeof(ThinTest));
+    thinTest3->list = list;
+    thinTest3->low = 67;
+    thinTest3->high = 100;
+    pthread_create(&thread1, NULL, remove_test, thinTest1);
+
 }
