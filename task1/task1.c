@@ -8,15 +8,26 @@
 
 static RoughNode *create_node(int, int);
 
-char insert(RoughList *list, int key, int value) {
-    RoughNode *pred, *curr;
-    RoughNode *newNode;
-    char result = '1';
 
-    if ((newNode = create_node(key, value)) == NULL)
-        return '0';
+char insertImpl(RoughList *list, int key, int value);
+
+char insert(RoughList *list, int key, int value) {
+    char result = 1;
 
     lock(list->mtx);
+    result = insertImpl(list, key, value);
+    unlock(list->mtx);
+
+    return result;
+}
+
+char insertImpl(RoughList *list, int key, int value) {
+    RoughNode *pred, *curr;
+    RoughNode *newNode;
+    char result = 1;
+
+    if ((newNode = create_node(key, value)) == NULL)
+        return 0;
 
     pred = list->head;
     curr = pred->next;
@@ -32,15 +43,12 @@ char insert(RoughList *list, int key, int value) {
 
         if (curr != list->tail && key == curr->key) {
             free_node(newNode)
-            result = '0';
+            result = 0;
         } else {
             newNode->next = curr;
             pred->next = newNode;
         }
     }
-
-    unlock(list->mtx);
-
     return result;
 }
 
@@ -54,17 +62,17 @@ FindResult find(RoughList *list, int key) {
     curr = pred->next;
 
     if (curr == list->tail) {
-        res.exists = '0';
+        res.exists = 0;
         res.value = 0;
     } else {
         while (curr != list->tail && curr->key < key) {
             curr = curr->next;
         }
         if (curr != list->tail && key == curr->key) {
-            res.exists = '1';
+            res.exists = 1;
             res.value = curr->value;
         } else
-            res.exists = '0';
+            res.exists = 0;
     }
 
     unlock(list->mtx);
@@ -85,7 +93,7 @@ static RoughNode *create_node(const int key, const int val) {
 
 char myRemove(RoughList *list, int key) {
     RoughNode *pred, *curr;
-    char res = '1';
+    char res = 1;
 
     lock(list->mtx);
 
@@ -93,7 +101,7 @@ char myRemove(RoughList *list, int key) {
     curr = pred->next;
 
     if (curr == list->tail) {
-        res = '0';
+        res = 0;
     } else {
         while (curr->key < key && curr != list->tail) {
             pred = curr;
@@ -103,7 +111,7 @@ char myRemove(RoughList *list, int key) {
         if (key == curr->key) {
             pred->next = curr->next;free_node(curr);
         } else
-            res = '0';
+            res = 0;
     }
 
     unlock(list->mtx);
@@ -118,11 +126,14 @@ RoughList *init_list(void) {
     }
 
     if ((list->head = (RoughNode *) calloc(1, sizeof(RoughNode))) == NULL) {
-        goto end;
+        free(list);
+        return NULL;
     }
 
     if ((list->tail = (RoughNode *) calloc(1, sizeof(RoughNode))) == NULL) {
-        goto end;
+        free(list->head);
+        free(list);
+        return NULL;
     }
 
     list->head->next = list->tail;
@@ -130,18 +141,26 @@ RoughList *init_list(void) {
     list->mtx = (pthread_mutex_t) PTHREAD_MUTEX_INITIALIZER;
 
     return list;
-
-    end:
-    free(list->head);
-    free(list);
-    return NULL;
 }
 
-RoughList get_snapshot(RoughList *list) {
+RoughList *copyList(RoughList *list, RoughList *list_copy) {
+    RoughNode *curr = list->head;
+
+    list_copy = init_list();
+
+    while (curr->next != list->tail) {
+        insertImpl(list_copy, curr->next->key, curr->next->value);
+        curr = curr->next;
+    }
+
+    return list_copy;
+}
+
+RoughList *get_snapshot(RoughList *list) {
     lock(list->mtx);
 
-    RoughList roughList = {.head = list->head,
-            .tail = list->tail};
+    RoughList *roughList = init_list();
+    roughList = copyList(list, roughList);
 
     unlock(list->mtx);
 

@@ -2,28 +2,21 @@
 
 #include <mutex>
 #include <queue>
-#include "SafeQueue.h"
+#include "ConcurrentQueue.h"
 
 using namespace std;
 
 template <typename T>
-class SafeQueue {
+class ConcurrentQueue {
 private:
   queue<T> m_queue;
   mutex m_mutex;
 public:
-  SafeQueue() {
-
-  }
+  ConcurrentQueue() = default;
 
   bool empty() {
     unique_lock<mutex> lock(m_mutex);
     return m_queue.empty();
-  }
-
-  int size() {
-    unique_lock<mutex> lock(m_mutex);
-    return m_queue.size();
   }
 
   bool enqueue(T& t) {

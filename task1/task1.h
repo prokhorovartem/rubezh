@@ -25,4 +25,4 @@ char myRemove(RoughList *list, int key);
 
 RoughList *init_list();
 
-RoughList get_snapshot(RoughList *list);
+RoughList *get_snapshot(RoughList *list);

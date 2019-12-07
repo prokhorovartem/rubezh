@@ -4,4 +4,4 @@ project(Rubezh C)
 set(CMAKE_FLAGS "clang++ -std=c++11 -Wall -Werrr -pedantic")
 
 include_directories(${PROJECT_SOURCE_DIR})
-add_executable(task1Main main.c task1.c ../task2/task2.h ../task2/task2.c ../task2/main.c)
+add_executable(task1Main main.c task1.c ../task1/task1.h ../task1/task1.c ../task1/main.c)

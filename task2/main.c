@@ -1,5 +1,6 @@
 #include <assert.h>
 #include "task2.h"
+#include <pthread.h>
 
 int main() {
     ThinList *list = init_list();
@@ -52,4 +53,6 @@ int main() {
 
     ThinList *copyThinList = get_snapshot(list);
     assert(copyThinList->head != NULL);
+
+
 }

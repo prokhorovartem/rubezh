@@ -67,15 +67,15 @@ FindResult find(ThinList *list, int key) {
     ThinNode *pred, *curr;
     FindResult result;
 
-    lock(list->head->mutex);  /* get lock of list->head */
+    lock(list->head->mutex);
 
     pred = list->head;
-    curr = pred->next;      /* curr is the next node of list->head */
+    curr = pred->next;
 
-    lock(curr->mutex);        /* get lock of curr */
+    lock(curr->mutex);
 
     if (curr == list->tail) {
-        /* there is no node in the list. */
+
         unlock(list->head->mutex);
         unlock(curr->mutex);
         result.exists = '0';
@@ -88,7 +88,7 @@ FindResult find(ThinList *list, int key) {
             lock(curr->mutex);
         }
 
-        /*
+
          * assert(pred->key < newNode->key);
          * assert(newNode->key <= curr->key);
          */
@@ -109,15 +109,15 @@ char myRemove(ThinList *list, int key) {
     ThinNode *pred, *curr;
     char ret = 1;
 
-    lock(list->head->mutex);  /* get lock of list->head */
+    lock(list->head->mutex);
 
     pred = list->head;
-    curr = pred->next;      /* curr is the next node of list->head */
+    curr = pred->next;
 
-    lock(curr->mutex);        /* get lock of curr */
+    lock(curr->mutex);
 
     if (curr == list->tail) {
-        /* there is no node in the list. */
+
         unlock(list->head->mutex);
         unlock(curr->mutex);
         ret = 0;
@@ -133,8 +133,8 @@ char myRemove(ThinList *list, int key) {
 //            *val = curr->val;
             pred->next = curr->next;
 
-            unlock(curr->mutex);free_node(curr); /* release lock of curr, and delete curr node. */
-            unlock(pred->mutex);      /* after curr node deletes, release lock of pred. */
+            unlock(curr->mutex);free_node(curr);
+            unlock(pred->mutex);
         } else {
             unlock(pred->mutex);
             unlock(curr->mutex);

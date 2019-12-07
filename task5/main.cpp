@@ -14,7 +14,7 @@ void merge(int low, int mid, int high)
     int* right = new int[high - mid];
 
     int n1 = mid - low + 1,
-    n2 = high - mid, i, j;
+            n2 = high - mid, i, j;
 
     for (i = 0; i < n1; i++)
         left[i] = a[i + low];
@@ -81,7 +81,7 @@ int main() {
     }
 
     for (int i = 0; i < THREADS_COUNT; ++i) {
-        pool.submit(merge_sort_threads);
+        pool.add_task(merge_sort_threads);
     }
 
     pool.shutdown();

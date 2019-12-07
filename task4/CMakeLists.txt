@@ -1,14 +1,7 @@
-cmake_minimum_required(VERSION 3.14.5)
-project(thread_pool_master)
+cmake_minimum_required(VERSION 3.14)
+project(Rubezh C)
 
-set(SOURCES main.cpp SafeQueue.h ThreadPool.h)
+set(CMAKE_FLAGS "clang++ -std=c++11 -Wall -Werrr -pedantic")
 
-SET(CMAKE_CXX_FLAGS -pthread)
-
-add_compile_options(
-        -std=c++11
-)
-
-# main.cpp
-add_executable(main ${HEADERS} ${SOURCES})
-target_link_libraries(main)
+include_directories(${PROJECT_SOURCE_DIR})
+add_executable(task4Main main.c task4.c ../task4/main.c)
