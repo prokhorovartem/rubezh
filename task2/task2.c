@@ -78,7 +78,7 @@ FindResult find(ThinList *list, int key) {
 
         unlock(list->head->mutex);
         unlock(curr->mutex);
-        result.exists = '0';
+        result.exists = 0;
         result.value = 0;
     } else {
         while (curr != list->tail && curr->key < key) {
@@ -89,14 +89,11 @@ FindResult find(ThinList *list, int key) {
         }
 
 
-         * assert(pred->key < newNode->key);
-         * assert(newNode->key <= curr->key);
-         */
         if (curr != list->tail && key == curr->key) {
-            result.exists = '1';
+            result.exists = 1;
             result.value = curr->val;
         } else
-            result.exists = '0';
+            result.exists = 0;
 
         unlock(pred->mutex);
         unlock(curr->mutex);
