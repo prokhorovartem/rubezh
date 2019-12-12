@@ -19,7 +19,7 @@ void *remove_test(void * data) {
 }
 
 void *create_arr() {
-    for (int i = 0; i < 100; i++)
+    for (int i = 1; i < 100; i++)
         insert(list, i * 3, i);
 }
 
@@ -45,15 +45,19 @@ void test() {
 
     ThinTest *thinTest2;
     thinTest2 = (ThinTest *) calloc(1, sizeof(ThinTest));
-    thinTest2->low = 33;
+    thinTest2->low = 32;
     thinTest2->high = 65;
     pthread_create(&thread2, NULL, remove_test, thinTest2);
 
     ThinTest *thinTest3;
     thinTest3 = (ThinTest *) calloc(1, sizeof(ThinTest));
-    thinTest3->low = 66;
+    thinTest3->low = 65;
     thinTest3->high = 100;
     pthread_create(&thread3, NULL, remove_test, thinTest3);
+
+    pthread_join(thread1, NULL);
+    pthread_join(thread2, NULL);
+    pthread_join(thread3, NULL);
 
     ThinTest *thinTest4;
     thinTest4 = (ThinTest *) calloc(1, sizeof(ThinTest));
@@ -63,24 +67,21 @@ void test() {
 
     ThinTest *thinTest5;
     thinTest5 = (ThinTest *) calloc(1, sizeof(ThinTest));
-    thinTest5->low = 11;
-    thinTest5->high = 20;
+    thinTest5->low = 10;
+    thinTest5->high = 21;
     pthread_create(&thread5, NULL, insert_test, thinTest5);
-
-    pthread_join(thread1, NULL);
-    pthread_join(thread2, NULL);
-    pthread_join(thread3, NULL);
 
     pthread_join(thread4, NULL);
     pthread_join(thread5, NULL);
 
     {
-//        for (int i = 1; i < 10; i++) {
-//            FindResult result = find(list, i);
-//            assert(result.exists == 1);
-//        }
+        for (int i = 1; i < 10; i++) {
+            FindResult result = find(list, i);
+            printf("%d ", i);
+            assert(result.exists == 1);
+        }
 
-        for (int i = 11; i < 20; i++) {
+        for (int i = 10; i < 21; i++) {
             FindResult result = find(list, i);
             printf("%d ", i);
             assert(result.exists == 1);
